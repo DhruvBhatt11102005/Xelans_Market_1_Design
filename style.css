@@ -16,9 +16,9 @@
   --clr-blue:       #2878c8;
   --clr-blue-dark:  #1a5fa0;
   --clr-blue-dim:   rgba(40, 120, 200, 0.15);
-  --clr-gold:       #c9a227;
-  --clr-gold-light: #d4b84a;
-  --clr-gold-dim:   rgba(201, 162, 39, 0.15);
+  --clr-gold:       #a27e1f;
+  --clr-gold-light: #bd9731;
+  --clr-gold-dim:   rgba(162, 126, 31, 0.15);
   --clr-purple:     #a78bfa;
   --clr-green:      #22c55e;
   --clr-red:        #f43f5e;
@@ -630,28 +630,52 @@ section { padding: 100px 0; }
   margin-top: 8px;
 }
 
+@keyframes holoSpinBloomNormal {
+  0%   { transform: perspective(1000px) rotateY(0deg); }
+  100% { transform: perspective(1000px) rotateY(360deg); }
+}
+
 .floating-badge {
   position: absolute;
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 12px 16px;
-  background: rgba(10,18,40,0.85);
-  backdrop-filter: blur(16px);
+  padding: 12px 18px;
+  background: rgba(10,18,40,0.95);
+  backdrop-filter: blur(20px);
   border: 1px solid var(--clr-border);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-card);
-  animation: float 3s ease-in-out infinite;
+  animation: holoSpinBloomNormal 12s linear infinite;
+  transform-style: preserve-3d;
+  overflow: hidden;
+  transition: var(--transition);
 }
-.badge-icon { font-size: 1.5rem; }
-.floating-badge strong { display: block; font-size: 0.85rem; color: var(--clr-white); }
-.floating-badge span { font-size: 0.72rem; color: var(--clr-text-dim); }
-.badge-insurance { bottom: -20px; left: -30px; animation-delay: 0s; }
-.badge-exec { top: -20px; right: -20px; animation-delay: 1.5s; }
 
-@keyframes float {
-  0%,100% { transform: translateY(0); }
-  50%      { transform: translateY(-8px); }
+.floating-badge:hover {
+  border-color: var(--clr-gold);
+  box-shadow: 0 0 30px rgba(162, 126, 31, 0.3);
+  transform: scale(1.02);
+}
+
+.floating-badge::after {
+  content: '';
+  position: absolute;
+  width: 200%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 220, 100, 0.6), transparent);
+  transform: rotate(45deg);
+  top: -100%; left: -100%;
+  transition: 0.5s;
+  pointer-events: none;
+}
+
+.floating-badge:hover::after {
+  animation: goldSheen 2s ease-in-out infinite;
+}
+
+@keyframes goldSheen {
+  0% { left: -100%; top: -100%; }
+  100% { left: 100%; top: 100%; }
 }
 
 /* Slide 2 Visual */
@@ -1288,21 +1312,45 @@ section { padding: 100px 0; }
   0%, 100% { opacity: 0.3; transform: scale(1); }
   50%      { opacity: 0.6; transform: scale(1.1); }
 }
-.market-icon { height: 160px; display: flex; align-items: center; justify-content: center; margin-bottom: 24px; }
-.market-icon img { 
-  max-height: 100%; max-width: 100%; object-fit: contain; 
-  filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3));
+.market-icon { 
+  height: 120px; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  margin-bottom: 24px; 
+  position: relative;
+}
+.market-icon img {
+  max-height: 100%;
+  max-width: 100%;
+  object-fit: contain;
   transition: var(--transition-slow);
 }
+.market-icon::before {
+  content: '';
+  position: absolute;
+  width: 70px; height: 70px;
+  background: radial-gradient(circle, rgba(162, 126, 31, 0.3) 0%, transparent 70%);
+  filter: blur(15px);
+  z-index: 0;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.market-card:hover .market-icon::before {
+  opacity: 1;
+}
 .market-card.animated .market-icon img {
-  animation: floatMarket 6s ease-in-out infinite alternate;
+  animation: floatMarket 12s linear infinite;
   animation-delay: calc(var(--delay, 0s) * 4);
 }
 @keyframes floatMarket {
-  0% { transform: translateY(0) rotate(0); }
-  100% { transform: translateY(-12px) rotate(2deg); }
+  0%   { transform: perspective(1000px) rotateY(0deg); }
+  100% { transform: perspective(1000px) rotateY(360deg); }
 }
-.market-card:hover .market-icon img { transform: scale(1.08) rotate(-2deg); filter: drop-shadow(0 20px 40px rgba(0,0,0,0.5)); }
+.market-card:hover .market-icon img { 
+  transform: scale(1.05) rotateY(15deg); 
+  filter: drop-shadow(0 0 20px var(--clr-gold)); 
+}
 .market-card h3 { color: var(--clr-white); font-size: 1.1rem; margin-bottom: 10px; }
 .market-card p { color: var(--clr-text-dim); font-size: 0.875rem; line-height: 1.6; margin-bottom: 20px; }
 .market-link {
@@ -1430,12 +1478,11 @@ section { padding: 100px 0; }
 .payment-method {
   background: var(--clr-surface);
   border: 1px solid var(--clr-border);
-  border-radius: var(--radius-md);
-  padding: 24px 12px;
+  border-radius: var(--radius-lg);
+  padding: 30px 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   text-align: center;
   gap: 12px;
   transition: var(--transition);
@@ -1444,49 +1491,45 @@ section { padding: 100px 0; }
   overflow: hidden;
 }
 
-/* Entrance + Float Sync */
-.payment-method.animated {
-  animation: floatPayment 5s ease-in-out infinite alternate;
-  animation-delay: calc(var(--delay, 0s) * 5);
+.payment-method:hover {
+  border-color: var(--clr-gold);
+  transform: translateY(-8px);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5), 0 0 25px rgba(162, 126, 31, 0.3);
+  background: var(--clr-surface) !important;
 }
 
-@keyframes floatPayment {
-  0% { transform: translateY(0); }
-  100% { transform: translateY(-8px); }
-}
-
-.payment-method::before {
+.payment-method::after {
   content: '';
   position: absolute;
-  top: -100%; left: -100%; 
-  width: 300%; height: 300%;
-  background: radial-gradient(circle at center, rgba(40,120,200,0.1) 0%, transparent 60%);
-  transition: var(--transition);
+  top: -100%; left: -100%;
+  width: 200%; height: 200%;
+  background: linear-gradient(135deg, transparent, rgba(255, 220, 100, 0.2), transparent);
+  transform: rotate(45deg);
   pointer-events: none;
 }
 
-.payment-method:hover {
-  border-color: var(--clr-blue);
-  box-shadow: 0 12px 30px rgba(0,0,0,0.6), var(--shadow-glow);
-  z-index: 5;
-  background: rgba(255,255,255,0.06);
+.payment-method:hover::after {
+  animation: goldSheen 2s ease-in-out infinite;
 }
-.payment-method:hover::before { top: -100%; left: -100%; opacity: 1; }
 
 .pm-icon {
   width: 64px; height: 52px;
   display: flex; align-items: center; justify-content: center;
-  transition: var(--transition);
-  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
+  transition: var(--transition-slow);
+  perspective: 1000px;
 }
-.payment-method:hover .pm-icon { transform: scale(1.15) translateY(-2px); filter: drop-shadow(0 0 12px var(--clr-blue)); }
+
+.payment-method:hover .pm-icon {
+  animation: floatMarket 12s linear infinite;
+  filter: drop-shadow(0 0 15px var(--clr-gold));
+}
 
 .pm-icon img, .pm-icon svg {
   max-width: 100%; max-height: 100%;
   object-fit: contain;
 }
 .payment-method span { font-size: 0.78rem; font-weight: 600; color: var(--clr-text-dim); text-align: center; position: relative; z-index: 1; transition: var(--transition); }
-.payment-method:hover span { color: var(--clr-white); }
+.payment-method:hover span { color: var(--clr-gold); }
 
 /* ============================================================
    TESTIMONIALS SECTION
@@ -1912,22 +1955,25 @@ section { padding: 100px 0; }
 .withdrawal-3d-wrap {
   position: relative;
   width: 100%;
-  max-width: 460px;
+  max-width: 380px;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 .floating-3d-img {
   width: 100%;
+  max-width: 380px;
   height: auto;
+  object-fit: contain;
   filter: drop-shadow(0 20px 40px rgba(0,0,0,0.5));
   border-radius: var(--radius-xl);
   overflow: hidden;
   animation: floatHand 5s ease-in-out infinite;
 }
 @keyframes floatHand {
-  0%, 100% { transform: translateY(0) rotate(0); }
-  50% { transform: translateY(-15px) rotate(1deg); }
+  0%   { transform: perspective(1000px) rotateY(0deg) rotateX(0deg); filter: drop-shadow(0 20px 40px rgba(0,0,0,0.5)); }
+  50%  { transform: perspective(1000px) rotateY(10deg) rotateX(5deg); filter: drop-shadow(0 30px 60px rgba(40,120,200,0.3)); }
+  100% { transform: perspective(1000px) rotateY(0deg) rotateX(0deg); filter: drop-shadow(0 20px 40px rgba(0,0,0,0.5)); }
 }
 
 .withdrawal-status-card {
@@ -1968,8 +2014,13 @@ section { padding: 100px 0; }
   border-radius: var(--radius-xl);
   padding: 32px;
   width: 100%;
-  max-width: 440px;
-  box-shadow: var(--shadow-glow), var(--shadow-card);
+  max-width: 360px;
+  box-shadow: 0 4px 30px rgba(0,0,0,0.4);
+  transition: var(--transition);
+}
+.social-trade-dashboard:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 40px rgba(162, 126, 31, 0.15);
 }
 .dashboard-header {
   display: flex;
